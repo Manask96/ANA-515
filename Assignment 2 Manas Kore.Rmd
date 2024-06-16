@@ -1,0 +1,104 @@
+---
+title: "Assignment 2"
+author: "Manas Kore"
+date: "2024-06-16"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+# Reading the data into R
+library(readr) # loading the readr package
+
+# Use read_csv() function to read the data
+ev_data <- read_csv("/Users/mkore/Downloads/Electric_Vehicle_Population_Data.csv")
+
+
+
+# Cleaning the data
+library(dplyr) # loading the dplyr package
+
+# Renaming columns for easier reference
+ev_data <- ev_data %>%
+  rename(
+    VIN = `VIN (1-10)`,
+    County = `County`,
+    City = `City`,
+    State = `State`,
+    Postal_Code = `Postal Code`,
+    Model_Year = `Model Year`,
+    Make = `Make`,
+    Model = `Model`,
+    EV_Type = `Electric Vehicle Type`,
+    CAFV_Eligibility = `Clean Alternative Fuel Vehicle (CAFV) Eligibility`,
+    Electric_Range = `Electric Range`,
+    Base_MSRP = `Base MSRP`,
+    Legislative_District = `Legislative District`,
+    DOL_Vehicle_ID = `DOL Vehicle ID`,
+    Vehicle_Location = `Vehicle Location`,
+    Electric_Utility = `Electric Utility`,
+    Census_Tract = `2020 Census Tract`
+  )
+
+
+# Getting the number of rows and columns
+num_rows <- nrow(ev_data)
+num_cols <- ncol(ev_data)
+
+# Create a data frame for column descriptions
+column_descriptions <- data.frame(
+  Column_Name = colnames(ev_data),
+  Description = c(
+    "Vehicle Identification Number (first 10 characters)",
+    "County of vehicle registration",
+    "City of vehicle registration",
+    "State of vehicle registration",
+    "Postal code of vehicle registration",
+    "Year of the vehicle model",
+    "Manufacturer of the vehicle",
+    "Model of the vehicle",
+    "Type of electric vehicle (BEV or PHEV)",
+    "Eligibility for Clean Alternative Fuel Vehicle",
+    "Electric range of the vehicle in miles",
+    "Manufacturer's Suggested Retail Price",
+    "Legislative district of vehicle registration",
+    "Unique vehicle ID assigned by the Department of Licensing",
+    "Location of the vehicle in geographical coordinates",
+    "Electric utility provider",
+    "2020 Census tract code"
+  )
+)
+
+
+# Display the table using kable
+library(knitr)
+kable(column_descriptions, col.names = c("Column Name", "Description"))
+
+
+# Selecting three columns for summary statistics
+selected_columns <- ev_data %>%
+  select(Electric_Range, Base_MSRP, Model_Year)
+
+# Calculating summary statistics
+summary_stats <- selected_columns %>%
+  summarise(
+    Min_Range = min(Electric_Range, na.rm = TRUE),
+    Max_Range = max(Electric_Range, na.rm = TRUE),
+    Mean_Range = mean(Electric_Range, na.rm = TRUE),
+    Missing_Range = sum(is.na(Electric_Range)),
+    
+    Min_MSRP = min(Base_MSRP, na.rm = TRUE),
+    Max_MSRP = max(Base_MSRP, na.rm = TRUE),
+    Mean_MSRP = mean(Base_MSRP, na.rm = TRUE),
+    Missing_MSRP = sum(is.na(Base_MSRP)),
+    
+    Min_Year = min(Model_Year, na.rm = TRUE),
+    Max_Year = max(Model_Year, na.rm = TRUE),
+    Mean_Year = mean(Model_Year, na.rm = TRUE),
+    Missing_Year = sum(is.na(Model_Year))
+  )
+
+summary_stats
